@@ -134,6 +134,22 @@ void UART0_printf( const char *fmt, ... )
                 UART0_putstr( convert( u, 16 ) );
                 break;
             }
+            case 't':
+            {
+                u = va_arg( argp, unsigned int );
+                uint32_t sec  = (uint32_t)(u / 1000);
+                if( 0 != sec )
+                {
+                    uint32_t msec = (uint32_t)(u % 1000);
+                    snprintf( str, 2*sizeof(uint32_t), "%d.%d", sec, msec );
+                    UART0_putstr( str );
+                }
+                else
+                {
+                    UART0_putstr( convert( u, 10 ) );
+                }
+                break;
+            }
             case '%':
             {
                 UART0_putchar( '%' );
