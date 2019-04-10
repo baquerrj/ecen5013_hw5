@@ -42,13 +42,13 @@ void logger_task( void *params )
             {
                 case MSG_GET_TEMP:
                 {
-                    printf( "MSG - %s ----- TICK: %u ----- TEMP: %f C\n",
+                    printf( "MSG - %s ----- TIME: %t ----- TEMP: %f C\n",
                             msg_in.msg, msg_in.tickcount, msg_in.data.temperature );
                     break;
                 }
                 case MSG_TOGGLE_LED:
                 {
-                    printf( "MSG - %s ----- TICK: %u ----- TOGGLE COUNT: %u\n",
+                    printf( "MSG - %s (Roberto) ----- TIME: %t ----- TOGGLE COUNT: %u\n",
                             msg_in.msg, msg_in.tickcount, msg_in.data.toggle_count );
                     break;
                 }

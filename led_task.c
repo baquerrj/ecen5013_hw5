@@ -28,10 +28,10 @@
 #define MY_STACK_SIZE 256
 
 #define LED_D1_PORT    GPIO_PORTN_BASE
-#define LED_D2_PORT    GPIO_PORTN_BASE
+#define LED_D2_PORT    LED_D1_PORT
 
-#define LED_D1_PIN     GPIO_PIN_1
-#define LED_D2_PIN     GPIO_PIN_0
+#define LED_D1_PIN     GPIO_PIN_0
+#define LED_D2_PIN     GPIO_PIN_1
 
 extern xQueueHandle q_pLoggerQueue;
 
