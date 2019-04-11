@@ -61,9 +61,7 @@ void UART0_printf( const char *fmt, ... )
     unsigned int u;
     char *s;
     double d;
-    char str[6];
     va_list argp;
-
     va_start( argp, fmt );
 
     p=fmt;
@@ -87,10 +85,11 @@ void UART0_printf( const char *fmt, ... )
                     d = -d;
                     UART0_putchar( '-' );
                 }
-                int32_t t1 = (int32_t)d;
-                int32_t t2 = (int32_t)((d -(int32_t)d )*1000);
-                snprintf( str, 2*sizeof( int32_t), "%d.%d", t1, t2 );
-                UART0_putstr( str );
+                i = (int32_t)d;
+                UART0_putstr( convert( i, 10 ) );
+                UART0_putchar( '.' );
+                i = (int32_t)((d -(int32_t)d )*1000);
+                UART0_putstr( convert( i, 10 ) );
                 break;
             }
             case 'c' :
@@ -141,11 +140,13 @@ void UART0_printf( const char *fmt, ... )
                 if( 0 != sec )
                 {
                     uint32_t msec = (uint32_t)(u % 1000);
-                    snprintf( str, 2*sizeof(uint32_t), "%d.%d", sec, msec );
-                    UART0_putstr( str );
+                    UART0_putstr( convert( sec, 10 ) );
+                    UART0_putchar( '.' );
+                    UART0_putstr( convert( msec, 10 ) );
                 }
                 else
                 {
+                    UART0_putchar( '.' );
                     UART0_putstr( convert( u, 10 ) );
                 }
                 break;
