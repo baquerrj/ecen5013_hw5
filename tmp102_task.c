@@ -22,12 +22,16 @@
 #include "logger_task.h"
 #include "tmp102_task.h"
 #include "my_i2c.h"
+#include "alert_task.h"
 
 #define MY_STACK_SIZE 256
 
-extern xQueueHandle q_pLoggerQueue;
+extern xQueueHandle g_pLoggerQueue;
+
+extern xTaskHandle g_pAlertTaskHandle;
 
 TimerHandle_t tmp102_timer_handle;
+
 
 static void init_1hz( void *params )
 {
@@ -59,14 +63,24 @@ void tmp102_task_callback( TimerHandle_t timer )
     {
         msg_out.tickcount = xTaskGetTickCount();
         msg_out.type = MSG_GET_TEMP;
-        msg_out.src = pcTimerGetTimerName( timer );
         memcpy( msg_out.msg, "GET_TEMP", sizeof( msg_out.msg ) );
         tmp102_get_temp( &temp );
 
         msg_out.data.temperature = temp;
 
+        int i = (int32_t)temp;
+        if( HIGH_TEMPERATURE < i )
+        {
+            /* Notify Alert Task of out-of-range temperature */
+            xTaskNotify( g_pAlertTaskHandle, MSG_TEMP_HIGH, eSetBits );
+        }
+        else if( LOW_TEMPERATURE > i )
+        {
+            /* Notify Alert Task of out-of-range temperature */
+            xTaskNotify( g_pAlertTaskHandle, MSG_TEMP_LOW, eSetBits );
+        }
         //Enqueue the worker queue with a new msg
-        if( xQueueSend( q_pLoggerQueue, &msg_out, xMaxBlockTime ) != pdPASS )
+        if( xQueueSend( g_pLoggerQueue, &msg_out, xMaxBlockTime ) != pdPASS )
         {
             puts("ERROR - TMP102 SENSOR TASK - QUEUE SEND\n");
         }

@@ -27,7 +27,7 @@
 
 volatile uint8_t loggerTaskInitDone = 0;
 
-xQueueHandle q_pLoggerQueue;
+xQueueHandle g_pLoggerQueue;
 
 void logger_task( void *params )
 {
@@ -35,7 +35,7 @@ void logger_task( void *params )
     log_msg_t msg_in;
     while(1)
     {
-        if(xQueueReceive( q_pLoggerQueue , &msg_in, xMaxBlockTime ))
+        if(xQueueReceive( g_pLoggerQueue , &msg_in, xMaxBlockTime ))
         {
             switch( msg_in.type )
             {
@@ -49,6 +49,13 @@ void logger_task( void *params )
                 {
                     printf( "(%s): %s ----- TIME: %t ----- TOGGLE COUNT: %u\n",
                             msg_in.src, msg_in.msg, msg_in.tickcount, msg_in.data.toggle_count );
+                    break;
+                }
+                case MSG_TEMP_LOW:
+                case MSG_TEMP_HIGH:
+                {
+                    printf( "(%s): %s ----- TIME: %t\n",
+                            msg_in.src, msg_in.msg, msg_in.tickcount );
                     break;
                 }
                 default:
@@ -65,7 +72,7 @@ void logger_task( void *params )
 uint8_t logger_task_init( void )
 {
     /* Creating a Queue required for Logging the msg */
-    q_pLoggerQueue = xQueueCreate(LOGGER_QUEUE_LENGTH, LOGGER_QUEUE_ITEMSIZE);
+    g_pLoggerQueue = xQueueCreate(LOGGER_QUEUE_LENGTH, LOGGER_QUEUE_ITEMSIZE);
 
     /* Create the task*/
     if(xTaskCreate(logger_task, (const portCHAR *)"LoggerTask", MY_STACK_SIZE, NULL,

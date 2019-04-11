@@ -14,8 +14,9 @@ typedef enum
 {
     MSG_BEGIN = 0,
     MSG_TOGGLE_LED,
-    MSG_LOG_STRING,
     MSG_GET_TEMP,
+    MSG_TEMP_LOW,
+    MSG_TEMP_HIGH,
     MSG_MAX = -1
 } log_msg_e;
 

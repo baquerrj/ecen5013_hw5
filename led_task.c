@@ -33,7 +33,7 @@
 #define LED_D1_PIN     GPIO_PIN_0
 #define LED_D2_PIN     GPIO_PIN_1
 
-extern xQueueHandle q_pLoggerQueue;
+extern xQueueHandle g_pLoggerQueue;
 
 TimerHandle_t led_timer_handle;
 
@@ -81,7 +81,7 @@ void led_task_callback( TimerHandle_t timer )
         GPIOPinWrite( LED_D2_PORT, LED_D2_PIN, led_d2 );
 
         //Enqueue the worker queue with a new msg
-        if( xQueueSend( q_pLoggerQueue, &msg_out, xMaxBlockTime ) != pdPASS )
+        if( xQueueSend( g_pLoggerQueue, &msg_out, xMaxBlockTime ) != pdPASS )
         {
             puts("ERROR - LED TASK - QUEUE SEND\n");
         }
