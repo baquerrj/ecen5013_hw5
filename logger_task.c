@@ -31,7 +31,6 @@ xQueueHandle q_pLoggerQueue;
 
 void logger_task( void *params )
 {
-    //float temp = 5.2;
     const TickType_t xMaxBlockTime = pdMS_TO_TICKS(500);
     log_msg_t msg_in;
     while(1)
@@ -42,14 +41,14 @@ void logger_task( void *params )
             {
                 case MSG_GET_TEMP:
                 {
-                    printf( "MSG - %s ----- TIME: %t ----- TEMP: %f C\n",
-                            msg_in.msg, msg_in.tickcount, msg_in.data.temperature );
+                    printf( "(%s): %s ----- TIME: %t ----- TEMP: %f C\n",
+                            msg_in.src, msg_in.msg, msg_in.tickcount, msg_in.data.temperature );
                     break;
                 }
                 case MSG_TOGGLE_LED:
                 {
-                    printf( "MSG - %s (Roberto) ----- TIME: %t ----- TOGGLE COUNT: %u\n",
-                            msg_in.msg, msg_in.tickcount, msg_in.data.toggle_count );
+                    printf( "(%s): %s ----- TIME: %t ----- TOGGLE COUNT: %u\n",
+                            msg_in.src, msg_in.msg, msg_in.tickcount, msg_in.data.toggle_count );
                     break;
                 }
                 default:
@@ -70,7 +69,7 @@ uint8_t logger_task_init( void )
 
     /* Create the task*/
     if(xTaskCreate(logger_task, (const portCHAR *)"LoggerTask", MY_STACK_SIZE, NULL,
-                       tskIDLE_PRIORITY + PRIO_WORKERTASK, NULL ) != pdTRUE)
+                       tskIDLE_PRIORITY + PRIO_LOG_TASK, NULL ) != pdTRUE)
     {
         return 1;
     }

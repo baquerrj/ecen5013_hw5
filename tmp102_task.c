@@ -32,7 +32,7 @@ TimerHandle_t tmp102_timer_handle;
 static void init_1hz( void *params )
 {
 
-    tmp102_timer_handle = xTimerCreate( "Timer1Hz", pdMS_TO_TICKS(1000), pdTRUE, (void*)0, tmp102_task_callback );
+    tmp102_timer_handle = xTimerCreate( "TMP102_1Hz", pdMS_TO_TICKS(1000), pdTRUE, (void*)0, tmp102_task_callback );
 
     if( tmp102_timer_handle == NULL)
     {
@@ -50,15 +50,17 @@ static void init_1hz( void *params )
 
 void tmp102_task_callback( TimerHandle_t timer )
 {
+    static log_msg_t msg_out;
+    msg_out.src = pcTimerGetTimerName( tmp102_timer_handle );
     float temp = -5.5;
     const TickType_t xMaxBlockTime = pdMS_TO_TICKS(500);
     //Timer handle for 1Hz Temperature Sensor task
     if( tmp102_timer_handle == timer )
     {
-        log_msg_t msg_out;
-        memcpy( msg_out.msg, "GET_TEMP", sizeof( msg_out.msg ) );
         msg_out.tickcount = xTaskGetTickCount();
         msg_out.type = MSG_GET_TEMP;
+        msg_out.src = pcTimerGetTimerName( timer );
+        memcpy( msg_out.msg, "GET_TEMP", sizeof( msg_out.msg ) );
         tmp102_get_temp( &temp );
 
         msg_out.data.temperature = temp;
@@ -97,7 +99,7 @@ uint8_t temp_task_init( void )
 {
     configASSERT( loggerTaskInitDone == 1 );
 
-    if( pdTRUE != xTaskCreate( init_1hz, (const portCHAR *)"tmp_1hz", MY_STACK_SIZE, NULL,
+    if( pdTRUE != xTaskCreate( init_1hz, (const portCHAR *)"TMP102_1Hz", MY_STACK_SIZE, NULL,
                                  tskIDLE_PRIORITY + PRIO_TMP_TASK, NULL ) )
     {
         return 1;

@@ -1,5 +1,5 @@
 /*!
- * @file	common_task.h
+ * @file	logger_task.h
  *
  * @brief
  *
@@ -16,14 +16,15 @@ typedef enum
     MSG_TOGGLE_LED,
     MSG_LOG_STRING,
     MSG_GET_TEMP,
-    MSG_MAX
+    MSG_MAX = -1
 } log_msg_e;
 
 typedef struct
 {
     TickType_t tickcount;
-    char msg[25];
     log_msg_e type;
+    const char *src;
+    char msg[25];
     union data
     {
         float temperature;

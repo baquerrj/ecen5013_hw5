@@ -22,16 +22,16 @@
 //
 //*****************************************************************************
 
-#ifndef __PRIORITIES_H__
-#define __PRIORITIES_H__
+#ifndef PRIORITIES_H
+#define PRIORITIES_H
 
 //*****************************************************************************
 //
 // The priorities of the various tasks.
 //
 //*****************************************************************************
-#define PRIO_WORKERTASK  1
+#define PRIO_LOG_TASK    1
 #define PRIO_LED_TASK    1
 #define PRIO_TMP_TASK    1
 
-#endif // __PRIORITIES_H__
+#endif /* PRIORITIES_H */

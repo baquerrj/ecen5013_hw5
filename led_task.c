@@ -39,7 +39,7 @@ TimerHandle_t led_timer_handle;
 
 static void init_10hz( void *params )
 {
-    led_timer_handle = xTimerCreate( "Timer10Hz", pdMS_TO_TICKS(100), pdTRUE, (void*)0, led_task_callback );
+    led_timer_handle = xTimerCreate( "LED_10Hz", pdMS_TO_TICKS(100), pdTRUE, (void*)0, led_task_callback );
 
     if( led_timer_handle == NULL)
     {
@@ -57,19 +57,20 @@ static void init_10hz( void *params )
 
 void led_task_callback( TimerHandle_t timer )
 {
+    static log_msg_t msg_out;
+    msg_out.src = pcTimerGetTimerName( led_timer_handle );
     const TickType_t xMaxBlockTime = pdMS_TO_TICKS(500);
-    //Timer handle for 10Hz LED task
+
     if( led_timer_handle == timer )
     {
         static uint32_t toggle_count = 0;
         toggle_count++;
 
         /* Build the message to send to logger */
-        log_msg_t msg_out;
         memcpy( msg_out.msg, "TOGGLE_LED", sizeof( msg_out.msg ) );
         msg_out.tickcount = xTaskGetTickCount();
-        msg_out.data.toggle_count = toggle_count;
         msg_out.type = MSG_TOGGLE_LED;
+        msg_out.data.toggle_count = toggle_count;
         static uint32_t led_d1 = LED_D1_PIN;
         static uint32_t led_d2 = LED_D2_PIN;
 
@@ -95,7 +96,7 @@ uint8_t led_task_init( void )
     MAP_SysCtlPeripheralEnable( SYSCTL_PERIPH_GPION );
     MAP_GPIOPinTypeGPIOOutput(LED_D2_PORT, LED_D2_PIN | LED_D1_PIN);
 
-    if( pdTRUE != xTaskCreate( init_10hz, (const portCHAR *)"led_10hz", MY_STACK_SIZE, NULL,
+    if( pdTRUE != xTaskCreate( init_10hz, (const portCHAR *)"LED_10Hz", MY_STACK_SIZE, NULL,
                                  tskIDLE_PRIORITY + PRIO_LED_TASK, NULL ) )
     {
         return 1;
