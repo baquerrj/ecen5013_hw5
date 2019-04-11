@@ -25,6 +25,7 @@
 #include "logger_task.h"
 #include "led_task.h"
 #include "tmp102_task.h"
+#include "alert_task.h"
 
 uint32_t g_sysClock = CLOCK_FREQ;
 
@@ -77,8 +78,13 @@ int main( void )
         puts( "ERROR - LED TASK INIT\n" );
         while(1);
     }
-/*
-*/
+
+    if( 0 != alert_task_init() )
+    {
+        puts( "ERROR - ALERT TASK INIT\n" );
+        while(1);
+    }
+
     puts( "SUCCESS - All tasks initialized. Starting scheduler...\n" );
 
     vTaskStartScheduler();
